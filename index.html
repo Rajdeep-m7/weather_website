@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="input">
+            <input id="search-city" type="text" placeholder="Enter city " spellcheck="false">
+            <button class="search-btn" id="searchBtn"><img src="images/search.png"> </button>
+        </div>
+        <div class="display-box">
+            <img id="weather-img" src="images/clear.png">
+            <h1 id="temp">28 °c</h1>
+            <h2 id="city">Siliguri</h2>
+        </div>
+        <div class="details">
+            <div class="col1">
+                <img  src="images/humidity.png">
+                <div>
+                    <p id="humidity">50%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col2">
+                <img  src="images/wind.png">
+                <div>
+                    <p id="wind">50 km/h</p>
+                    <p>Wind</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        const apiurl="https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        const apikey="823cfa2d96d4b25c74ab9e92540ca811";
+        const searchCity= document.getElementById("search-city");
+        const searchBtn= document.getElementById("searchBtn");
+        const weatherImg= document.getElementById("weather-img");
+
+
+        async function checkWeather(city){
+            try{
+            const response= await fetch(apiurl +city+ `&appid=${apikey}`);
+            var data=await response.json();
+            console.log(data);
+            document.getElementById("temp").innerHTML=Math.round(data.main.temp)+"°c";
+            document.getElementById("wind").innerHTML=data.wind.speed+" km/h";
+            document.getElementById("humidity").innerHTML=data.main.humidity+"%";
+            document.getElementById("city").innerHTML=data.name;
+
+            if(data.weather[0].main=="Clouds"){
+                weatherImg.src="images/clouds.png";
+            }
+            if(data.weather[0].main=="Clear"){
+                weatherImg.src="images/clear.png";
+            }
+            if(data.weather[0].main=="Drizzle"){
+                weatherImg.src="images/drizzle.png";
+            }
+            if(data.weather[0].main=="Mist"){
+                weatherImg.src="images/mist.png";
+            }
+            if(data.weather[0].main=="Rain"){
+                weatherImg.src="images/rain.png";
+            }
+            if(data.weather[0].main=="Snow"){
+                weatherImg.src="images/snow.png";
+            }
+            if(data.weather[0].main=="Wind"){
+                weatherImg.src="images/wind.png";
+            }
+            document.querySelector(".display-box").style.display="block";
+            document.querySelector(".details").style.display="flex";
+        }catch(error){
+            alert("City not found");
+            document.querySelector(".display-box").style.display="none";
+            document.querySelector(".details").style.display="none";
+        }
+    }
+
+        searchBtn.addEventListener("click",()=>{
+            checkWeather(searchCity.value);
+        })
+        searchCity.addEventListener("keydown",(e)=>{
+            if(e.key==="Enter"){
+                checkWeather(searchCity.value);
+            }
+        })
+
+
+        
+
+    </script>
+</body>
+</html>
